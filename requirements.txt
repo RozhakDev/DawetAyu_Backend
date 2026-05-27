@@ -3,6 +3,7 @@ attrs==26.1.0
 certifi==2026.5.20
 charset-normalizer==3.4.7
 Django==6.0.5
+django-cors-headers==4.9.0
 django-environ==0.13.0
 django-unfold==0.94.0
 djangorestframework==3.17.1

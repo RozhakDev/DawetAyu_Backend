@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import transaction
+from django.conf import settings
 from .services import PaymenkuService
 from .serializers import CreatePaymentSerializer, PaymentSerializer
 from .models import Payment
@@ -30,8 +31,7 @@ class CreatePaymentView(APIView):
 
         order_id = serializer.validated_data['order_id']
         channel_code = serializer.validated_data['channel_code']
-        return_url = serializer.validated_data['return_url']
-
+        
         try:
             order = Order.objects.get(id=order_id, user=request.user)
         except Order.DoesNotExist:
@@ -41,6 +41,8 @@ class CreatePaymentView(APIView):
         if order.payment_status == 'paid':
             logger.info(f"Pembuatan payment dibatalkan (User: {request.user.email}): Pesanan ID {order_id} sudah lunas.")
             return Response({"detail": "Pesanan ini sudah dibayar."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return_url = f"{settings.FRONTEND_RETURN_URL}?order_id={order.id}"
         
         service = PaymenkuService()
         trx_data = service.create_transaction(order, channel_code, return_url)

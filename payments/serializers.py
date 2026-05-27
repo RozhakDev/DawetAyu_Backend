@@ -10,4 +10,3 @@ class PaymentSerializer(serializers.ModelSerializer):
 class CreatePaymentSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
     channel_code = serializers.CharField(max_length=50)
-    return_url = serializers.URLField(default="https://ayupay.com/success")

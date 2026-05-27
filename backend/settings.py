@@ -19,6 +19,8 @@ PAYMENKU_API_KEY = env('PAYMENKU_API_KEY')
 PAYMENKU_BASE_URL = env('PAYMENKU_BASE_URL', default='https://paymenku.com/api/v1')
 PAYMENKU_WEBHOOK_SECRET = env('PAYMENKU_WEBHOOK_SECRET', default='')
 
+FRONTEND_RETURN_URL = env('FRONTEND_RETURN_URL', default=f'http://localhost:3000/success')
+
 INSTALLED_APPS = [
     "unfold",
 
@@ -28,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 
     # Third Party
     'rest_framework',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:3000'])
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -102,6 +107,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
