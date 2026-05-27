@@ -13,6 +13,10 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
+PAYMENKU_API_KEY = env('PAYMENKU_API_KEY')
+PAYMENKU_BASE_URL = env('PAYMENKU_BASE_URL', default='https://paymenku.com/api/v1')
+PAYMENKU_WEBHOOK_SECRET = env('PAYMENKU_WEBHOOK_SECRET', default='')
+
 INSTALLED_APPS = [
     "unfold",
 
