@@ -19,11 +19,23 @@ logger = logging.getLogger(__name__)
     )
 )
 class RegisterView(generics.CreateAPIView):
+    """
+    Layanan pendaftaran akun pelanggan baru.
+
+    Mendaftarkan pengguna baru ke sistem berdasarkan data nama, email,
+    dan kata sandi yang valid.
+    """
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
     def perform_create(self, serializer):
+        """
+        Menyimpan data pengguna baru dan mencatat aktivitas ke log.
+
+        Args:
+            serializer (Serializer): Serializer registrasi dengan data valid.
+        """
         user = serializer.save()
         logger.info(f"Registrasi berhasil: Pengguna {user.email} (Role: {user.role}) baru saja mendaftar.")
 
@@ -45,10 +57,22 @@ class RegisterView(generics.CreateAPIView):
     )
 )
 class ProfileView(generics.RetrieveUpdateAPIView):
+    """
+    Layanan pengelolaan profil akun pengguna.
+
+    Memungkinkan pengguna melihat informasi akun mereka serta memperbarui
+    data diri baik secara parsial maupun keseluruhan.
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
 
     def get_object(self):
+        """
+        Mengambil data pengguna yang sedang login.
+
+        Returns:
+            CustomUser: Objek user yang sedang mengakses endpoint.
+        """
         return self.request.user
     
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -61,6 +85,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
     )
 )
 class CustomTokenObtainPairView(TokenObtainPairView):
+    """
+    Layanan autentikasi login (kredensial).
+
+    Memverifikasi kesesuaian email dan kata sandi pengguna untuk menerbitkan
+    access token dan refresh token JWT.
+    """
     pass
 
 @extend_schema_view(
@@ -71,9 +101,21 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     )
 )
 class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Layanan pembaruan access token (refresh).
+
+    Menerbitkan access token JWT yang baru menggunakan refresh token
+    yang dikirim oleh klien.
+    """
     pass
 
 class LogoutView(APIView):
+    """
+    Layanan keluar sesi akun (logout).
+
+    Menghentikan akses token pengguna secara aman dengan memasukkan refresh
+    token ke dalam daftar hitam (blacklist) sistem.
+    """
     permission_classes = (IsAuthenticated,)
 
     @extend_schema(
@@ -84,6 +126,15 @@ class LogoutView(APIView):
         responses={205: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT}
     )
     def post(self, request):
+        """
+        Menangani proses pemutusan sesi dan blacklist token.
+
+        Args:
+            request (Request): Objek request dengan data refresh token.
+
+        Returns:
+            Response: Informasi status sukses atau gagal melakukan logout.
+        """
         try:
             refresh_token = request.data.get('refresh')
             if not refresh_token:

@@ -24,9 +24,24 @@ logger = logging.getLogger(__name__)
     )
 )
 class PaymentChannelListView(APIView):
+    """
+    Layanan daftar metode pembayaran.
+
+    Menghubungi API Paymenku untuk mengambil seluruh jenis saluran pembayaran
+    aktif yang didukung untuk transaksi.
+    """
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        """
+        Menangani permintaan GET daftar saluran pembayaran.
+
+        Args:
+            request (Request): Objek request dari klien.
+
+        Returns:
+            Response: Respons JSON daftar channel pembayaran.
+        """
         service = PaymenkuService()
         channels = service.get_payment_channels()
         return Response({"status": "success", "data": channels})
@@ -39,10 +54,25 @@ class PaymentChannelListView(APIView):
     )
 )
 class CreatePaymentView(APIView):
+    """
+    Layanan penerbitan tagihan pembayaran.
+
+    Membuat record transaksi baru di Paymenku dan menghasilkan tautan (URL)
+    pembayaran digital yang valid bagi pelanggan.
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = CreatePaymentSerializer
 
     def post(self, request):
+        """
+        Menangani pembuatan link transaksi pembayaran baru.
+
+        Args:
+            request (Request): Objek request dengan parameter order_id dan channel_code.
+
+        Returns:
+            Response: Detail data pembayaran baru yang berhasil diterbitkan.
+        """
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -90,9 +120,24 @@ class CreatePaymentView(APIView):
     )
 )
 class PaymenkuWebhookView(APIView):
+    """
+    Layanan callback notifikasi pembayaran (webhook).
+
+    Menerima pemberitahuan perubahan status transaksi secara real-time
+    dari server Paymenku, lalu memperbarui status pesanan terkait.
+    """
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        """
+        Menangani pembaruan status transaksi pembayaran dari webhook.
+
+        Args:
+            request (Request): Objek request berisi data signature dan status transaksi.
+
+        Returns:
+            Response: Status keberhasilan pemrosesan webhook.
+        """
         signature = request.headers.get('X-PaymenKu-Signature')
         timestamp = request.headers.get('X-PaymenKu-Timestamp')
         raw_body = request.body.decode('utf-8')

@@ -4,6 +4,12 @@ from core.models import TimeStampedModel
 from orders.models import Order
 
 class Payment(TimeStampedModel):
+    """
+    Model transaksi pembayaran digital via Paymenku.
+
+    Menghubungkan record transaksi pesanan dengan ID transaksi Paymenku,
+    metode pembayaran, status, serta tautan (URL) invoice pembayaran.
+    """
     PAYMENT_STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('paid', 'Paid'),
@@ -40,4 +46,10 @@ class Payment(TimeStampedModel):
         ordering = ['-created_at']
 
     def __str__(self):
+        """
+        Mengembalikan detail ringkas transaksi pembayaran.
+
+        Returns:
+            str: String representasi transaksi memuat Trx ID, nomor pesanan, dan status.
+        """
         return f"Payment {self.transaction_id} - Order #{self.order.id} ({self.get_payment_status_display()})"

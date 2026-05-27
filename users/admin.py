@@ -9,17 +9,35 @@ from unfold.admin import ModelAdmin
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
+    """
+    Formulir pembuatan pengguna baru di panel admin.
+
+    Menyediakan kolom input email, nama, dan role untuk mempermudah pendaftaran
+    akun pengguna baru dari antarmuka administrasi.
+    """
     class Meta:
         model = CustomUser
         fields = ('email', 'name', 'role')
 
 class CustomUserChangeForm(UserChangeForm):
+    """
+    Formulir modifikasi detail pengguna di panel admin.
+
+    Digunakan untuk mengubah data diri, email, role, dan hak akses
+    dari akun pengguna yang sudah terdaftar.
+    """
     class Meta:
         model = CustomUser
         fields = ('email', 'name', 'role')
 
 @admin.register(CustomUser)
 class CustomUserAdmin(ModelAdmin, BaseUserAdmin):
+    """
+    Pengaturan tampilan panel admin untuk model CustomUser.
+
+    Menyusun konfigurasi daftar tampilan tabel, fitur pencarian, kolom filter,
+    serta pengelompokan form pengeditan profil pengguna.
+    """
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 

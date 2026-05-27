@@ -4,6 +4,12 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    """
+    Model data pengguna kustom untuk sistem AyuPay.
+
+    Menggunakan alamat email sebagai identitas utama login (autentikasi) dan
+    membedakan akses berdasarkan peran (admin atau customer).
+    """
     ROLE_CHOICES = (
         ('admin', 'Admin'),
         ('customer', 'Customer'),
@@ -30,4 +36,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Users'
 
     def __str__(self):
+        """
+        Mengembalikan nama dan alamat email pengguna.
+
+        Returns:
+            str: Nama pengguna disertai email dalam tanda kurung.
+        """
         return f"{self.name} ({self.email})"

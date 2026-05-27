@@ -11,6 +11,12 @@ from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 
 class HealthCheckView(APIView):
+    """
+    Pemeriksaan status kesehatan sistem.
+
+    Digunakan oleh layanan monitoring untuk memantau apakah server backend
+    dan basis data terhubung dengan normal.
+    """
     permission_classes = (AllowAny,)
 
     @extend_schema(
@@ -20,6 +26,16 @@ class HealthCheckView(APIView):
         responses={200: OpenApiTypes.OBJECT, 503: OpenApiTypes.OBJECT}
     )
     def get(self, request):
+        """
+        Endpoint health check untuk memvalidasi ketersediaan layanan API
+        dan koneksi database.
+
+        Args:
+            request (Request): Request HTTP dari klien.
+
+        Returns:
+            Response: Status kesehatan sistem dan database.
+        """
         try:
             with connection.cursor() as cursor:
                 cursor.execute("SELECT 1;")
@@ -46,6 +62,11 @@ class HealthCheckView(APIView):
     )
 )
 class CategoryListView(generics.ListAPIView):
+    """
+    Layanan untuk melihat daftar kategori produk.
+
+    Menampilkan seluruh pengelompokan menu Dawet Ayu yang tersedia dalam sistem.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (AllowAny,)
@@ -62,12 +83,24 @@ class CategoryListView(generics.ListAPIView):
     )
 )
 class ProductListView(generics.ListAPIView):
+    """
+    Layanan katalog produk Dawet Ayu.
+
+    Menyediakan daftar menu Dawet Ayu dengan dukungan pencarian kata kunci
+    serta filter kategori produk.
+    """
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'description']
 
     def get_queryset(self):
+        """
+        Mengambil query produk yang aktif dan sesuai filter.
+
+        Returns:
+            QuerySet: Daftar produk terfilter sesuai parameter request.
+        """
         queryset = Product.objects.select_related('category').all()
 
         category_id = self.request.query_params.get('category', None)
@@ -84,6 +117,11 @@ class ProductListView(generics.ListAPIView):
     )
 )
 class ProductDetailView(generics.RetrieveAPIView):
+    """
+    Layanan pencarian detail produk.
+
+    Menyajikan informasi mendalam untuk satu produk Dawet Ayu berdasarkan parameter ID.
+    """
     queryset = Product.objects.select_related('category').all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny,)
