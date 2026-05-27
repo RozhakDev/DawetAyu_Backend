@@ -120,10 +120,31 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'AyuPay API',
-    'DESCRIPTION': 'Dokumentasi REST API untuk aplikasi AyuPay (Mobile & Web)',
+    'TITLE': 'AyuPay API - Dawet Ayu Banjarnegara',
+    'DESCRIPTION': (
+        'Dokumentasi resmi REST API untuk platform pemesanan dan pembayaran digital AyuPay.'
+        'Sistem ini mengintegrasikan aplikasi mobile (Flutter) dengan backend '
+        'untuk melayani pemesanan minuman tradisional khas Banjarnegara secara modern.\n\n'
+        '**Autentikasi:** API ini menggunakan otorisasi berbasis JSON Web Token (JWT). '
+        'Gunakan format `Bearer <token>` pada header permintaan untuk mengakses endpoint privat.'
+    ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api/v1',
+    'TAGS': [
+        {'name': 'Autentikasi', 'description': 'Manajemen registrasi, login, dan logout pengguna.'},
+        {'name': 'Katalog Dawet Ayu', 'description': 'Melihat daftar kategori dan produk Dawet Ayu.'},
+        {'name': 'Manajemen Pesanan', 'description': 'Pembuatan pesanan (checkout) dan riwayat transaksi.'},
+        {'name': 'Pembayaran Digital', 'description': 'Integrasi payment gateway (Paymenku) dan webhook callback.'},
+        {'name': 'Profil Pengguna', 'description': 'Pengelolaan informasi akun pengguna.'},
+    ],
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'displayRequestDuration': True,
+        'persistAuthorization': True,
+        'filter': True,
+    },
 }
 
 UNFOLD = {

@@ -4,6 +4,8 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.types import OpenApiTypes
 from django.db import transaction
 from django.conf import settings
 from .services import PaymenkuService
@@ -13,6 +15,14 @@ from orders.models import Order
 
 logger = logging.getLogger(__name__)
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Daftar Channel Pembayaran",
+        description="Mengambil daftar saluran pembayaran (payment channels) yang didukung oleh Paymenku (misal: VA BCA, QRIS, dll).",
+        tags=["Pembayaran Digital"],
+        responses={200: OpenApiTypes.OBJECT}
+    )
+)
 class PaymentChannelListView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -21,6 +31,13 @@ class PaymentChannelListView(APIView):
         channels = service.get_payment_channels()
         return Response({"status": "success", "data": channels})
     
+@extend_schema_view(
+    post=extend_schema(
+        summary="Buat Link Pembayaran",
+        description="Membuat transaksi pembayaran di Paymenku berdasarkan ID pesanan dan channel pembayaran yang dipilih.",
+        tags=["Pembayaran Digital"]
+    )
+)
 class CreatePaymentView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CreatePaymentSerializer
@@ -63,6 +80,15 @@ class CreatePaymentView(APIView):
         response_serializer = PaymentSerializer(payment)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
     
+@extend_schema_view(
+    post=extend_schema(
+        summary="Webhook Callback (Paymenku)",
+        description="*Endpoint internal* yang digunakan oleh server Paymenku untuk mengirim notifikasi status pembayaran (sukses/gagal). Tidak memerlukan Bearer Token.",
+        tags=["Pembayaran Digital"],
+        request=OpenApiTypes.OBJECT,
+        responses={200: OpenApiTypes.OBJECT, 401: OpenApiTypes.OBJECT, 404: OpenApiTypes.OBJECT}
+    )
+)
 class PaymenkuWebhookView(APIView):
     permission_classes = (AllowAny,)
 
