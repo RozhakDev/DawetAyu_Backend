@@ -1,7 +1,10 @@
+import logging
 from rest_framework import serializers
 from django.db import transaction
 from .models import Order, OrderItem
 from core.models import Product
+
+logger = logging.getLogger(__name__)
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
@@ -41,7 +44,8 @@ class CreateOrderSerializer(serializers.Serializer):
                     raise serializers.ValidationError(f"Produk dengan ID {item_data['product_id']} tidak ditemukan.")
                 
                 if product.stock < item_data['quantity']:
-                    raise serializers.ValidationError(f"Stok untuk '{product.name}' tidak mencukupi. Sisa stok: {product.stock}")
+                    logger.warning(f"Pesanan ditolak (User: {user.email}): Stok produk '{product.name}' (ID: {product.id}) tidak mencukupi. Diminta: {item_data['quantity']}, Tersedia: {product.stock}")
+                    raise serializers.ValidationError(f"Stok untuk '{product.name}' tidak mencukupi.")
                 
                 subtotal = product.price * item_data['quantity']
                 total_price += subtotal
