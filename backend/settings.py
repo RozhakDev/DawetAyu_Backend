@@ -116,3 +116,23 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+UNFOLD = {
+    "SITE_TITLE": "AyuPay Admin",
+    "SITE_HEADER": "AyuPay - Dawet Ayu",
+    "COLORS": {
+        "primary": {
+            "50": "#edf5ef",
+            "100": "#d3e7d8",
+            "200": "#acd2b7",
+            "300": "#7ab68d",
+            "400": "#5a9e68",
+            "500": "#4F8A5B",
+            "600": "#3d7c4a",
+            "700": "#2f6339",
+            "800": "#264f2e",
+            "900": "#203f26",
+            "950": "#0e1d11",
+        },
+    },
+}
