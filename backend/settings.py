@@ -1,6 +1,8 @@
 import environ
-from pathlib import Path
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,7 +58,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,6 +122,7 @@ SPECTACULAR_SETTINGS = {
 UNFOLD = {
     "SITE_TITLE": "AyuPay Admin",
     "SITE_HEADER": "AyuPay - Dawet Ayu",
+    "SITE_SYMBOL": "storefront",
     "COLORS": {
         "primary": {
             "50": "#edf5ef",
@@ -134,5 +137,66 @@ UNFOLD = {
             "900": "#203f26",
             "950": "#0e1d11",
         },
+    },
+    "DASHBOARD_CALLBACK": "core.admin_dashboard.dashboard_callback",
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": _("Toko Dawet Ayu"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Dasbor Utama"),
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": _("Katalog"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Kategori"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:core_category_changelist"),
+                    },
+                    {
+                        "title": _("Produk"),
+                        "icon": "inventory_2",
+                        "link": reverse_lazy("admin:core_product_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Transaksi & Keuangan"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Pesanan (Orders)"),
+                        "icon": "shopping_cart",
+                        "link": reverse_lazy("admin:orders_order_changelist"),
+                    },
+                    {
+                        "title": _("Pembayaran"),
+                        "icon": "payments",
+                        "link": reverse_lazy("admin:payments_payment_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Manajemen Sistem"),
+                "separator": True,
+                "items": [
+                    {
+                        "title": _("Pengguna & Admin"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:users_customuser_changelist"),
+                    },
+                ],
+            },
+        ],
     },
 }

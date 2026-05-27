@@ -1,0 +1,31 @@
+{% extends 'admin/index.html' %}
+{% load unfold %}
+
+{% block content %}
+<div class="flex flex-col gap-4 mb-8 md:flex-row">
+    {% for card in kpis %}
+        {% component "unfold/components/card.html" with class="flex-1" %}
+            {% component "unfold/components/text.html" %}
+                {{ card.title }}
+            {% endcomponent %}
+            {% component "unfold/components/title.html" %}
+                {{ card.metric }}
+            {% endcomponent %}
+        {% endcomponent %}
+    {% endfor %}
+</div>
+
+<div class="mb-8">
+    {% component "unfold/components/card.html" %}
+        <div class="mb-4 font-semibold text-gray-500 dark:text-gray-400">
+            Statistik Pendapatan (7 Hari Terakhir)
+        </div>
+        <div class="h-64 md:h-80">
+            {% component "unfold/components/chart/line.html" with data=chart_data %}
+            {% endcomponent %}
+        </div>
+    {% endcomponent %}
+</div>
+
+{{ block.super }}
+{% endblock %}
